@@ -2,892 +2,647 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="衛生管理">
-<title>衛生管理システム</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="apple-mobile-web-app-title" content="HH HACCP">
+<meta name="theme-color" content="#ffffff">
+<title>HutteHayashi HACCP</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
+:root{
+  --bg:#ffffff;--bg2:#f5f5f5;--bg3:#ebebeb;
+  --text:#1a1a1a;--text2:#666;--text3:#999;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.2);
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-text:#0C447C;
+  --green:#1D9E75;--green-bg:#EAF3DE;--green-text:#3B6D11;
+  --red:#E24B4A;--red-bg:#FCEBEB;--red-text:#A32D2D;
+  --amber-bg:#FAEEDA;--amber-text:#633806;
+  --radius:8px;--radius-lg:12px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;
+    --text:#f2f2f7;--text2:#aeaeb2;--text3:#636366;
+    --border:rgba(255,255,255,0.12);--border2:rgba(255,255,255,0.2);
+    --blue-bg:#0c2a4a;--blue-text:#85B7EB;
+    --green-bg:#0a2a1a;--green-text:#5DCAA5;
+    --red-bg:#2a0a0a;--red-text:#F09595;
+    --amber-bg:#2a1a00;--amber-text:#EF9F27;
+  }
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:-apple-system,BlinkMacSystemFont,'Hiragino Sans',sans-serif;font-size:14px;background:#f2f2f7;color:#1c1c1e;min-height:100vh;padding-bottom:80px}
-.header{background:#fff;border-bottom:0.5px solid #e0e0e0;padding:12px 16px;position:sticky;top:0;z-index:100}
-.header h1{font-size:17px;font-weight:600}
-.store-bar{background:#fff;border-bottom:0.5px solid #e0e0e0;padding:8px 12px;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.store-bar::-webkit-scrollbar{display:none}
-.store-chip{padding:6px 14px;border-radius:20px;border:0.5px solid #ddd;font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;background:#fff;color:#666}
-.store-chip.active{background:#000;color:#fff;border-color:#000}
-.tab-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:0.5px solid #e0e0e0;display:flex;z-index:100}
-.tab{flex:1;padding:8px 0 12px;text-align:center;cursor:pointer;font-size:10px;color:#999;border:none;background:none}
-.tab.active{color:#000}
-.tab-icon{font-size:20px;display:block;margin-bottom:2px}
-.page{display:none;padding:12px}
-.page.active{display:block}
-.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px}
-.card-title{font-size:14px;font-weight:600;color:#444;margin-bottom:12px}
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-label{font-size:12px;color:#666;display:block;margin-bottom:4px}
-input,textarea,select{width:100%;border:0.5px solid #ddd;border-radius:8px;padding:10px 12px;font-size:14px;font-family:inherit;background:#fff;-webkit-appearance:none}
-textarea{min-height:80px;resize:vertical}
-.btn{width:100%;background:#000;color:#fff;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px}
-.btn:active{opacity:0.8}
-.btn-sm{background:#000;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer}
-.btn-outline{background:#fff;color:#000;border:0.5px solid #000;border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer}
-.btn-danger{background:#fff;color:#E24B4A;border:0.5px solid #E24B4A;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer}
-.btn-green{background:#1D9E75}
-.check-row{display:flex;align-items:center;padding:12px 0;border-bottom:0.5px solid #f0f0f0;cursor:pointer}
-.checkbox{width:22px;height:22px;border-radius:6px;border:1.5px solid #ccc;margin-right:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.checkbox.checked{background:#000;border-color:#000;color:#fff}
-.check-label{flex:1;font-size:14px;line-height:1.4}
-.check-label.done{color:#999;text-decoration:line-through}
-.badge{font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px}
-.badge-ok{background:#E1F5EE;color:#085041}
-.badge-ng{background:#FCEBEB;color:#791F1F}
-.badge-warn{background:#FAEEDA;color:#633806}
-.sep{height:1px;background:#f0f0f0;margin:12px 0}
-.row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:0.5px solid #f0f0f0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;background:var(--bg2);color:var(--text);min-height:100vh}
+.app{max-width:480px;margin:0 auto;padding-bottom:90px}
+.hdr{background:var(--bg);border-bottom:0.5px solid var(--border);padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
+.hdr-title{font-size:15px;font-weight:600;color:var(--text)}
+.hdr-date-row{display:flex;align-items:center;gap:6px;margin-top:2px}
+.date-sel{font-size:12px;border:0.5px solid var(--border2);border-radius:var(--radius);padding:3px 8px;background:var(--bg);color:var(--text)}
+.past-pill{font-size:11px;padding:2px 8px;border-radius:99px;background:var(--amber-bg);color:var(--amber-text);font-weight:500}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:4px}
+.sync-dot.off{background:var(--text3)}
+.sync-dot.syncing{background:#EF9F27;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.past-banner{background:var(--amber-bg);border-bottom:0.5px solid rgba(186,117,23,0.3);padding:9px 16px;display:none;align-items:center;gap:8px}
+.past-banner.show{display:flex}
+.past-banner-text{font-size:12px;color:var(--amber-text);flex:1}
+.past-banner-btn{font-size:12px;color:var(--amber-text);background:none;border:none;cursor:pointer;font-weight:500;padding:0}
+.nav{display:flex;background:var(--bg);border-bottom:0.5px solid var(--border)}
+.nb{flex:1;padding:10px 4px;font-size:11px;color:var(--text2);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;text-align:center;white-space:nowrap;line-height:1.4}
+.nb.on{color:var(--blue);border-bottom-color:var(--blue);font-weight:600}
+.sec{padding:10px}
+.card{background:var(--bg);border-radius:var(--radius-lg);border:0.5px solid var(--border);margin-bottom:10px;overflow:hidden}
+.ch{padding:12px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:8px}
+.cht{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.chs{font-size:11px;color:var(--text2)}
+.row{display:flex;align-items:center;padding:12px 14px;border-bottom:0.5px solid var(--border);gap:8px;min-height:48px}
 .row:last-child{border-bottom:none}
-.pill{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer}
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.stat-box{background:#f5f5f5;border-radius:10px;padding:12px;text-align:center}
-.stat-num{font-size:22px;font-weight:500}
-.stat-label{font-size:11px;color:#666;margin-top:2px}
-.progress-bar{height:5px;background:#f0f0f0;border-radius:3px;overflow:hidden;flex:1}
-.progress-fill{height:5px;border-radius:3px}
-.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;align-items:flex-end}
-.modal.open{display:flex}
-.modal-box{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:70vh;overflow-y:auto}
-.modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:0.5px solid #eee}
-.modal-title{font-size:16px;font-weight:600}
-.modal-body{padding:16px}
-.date-item{padding:14px 16px;border-bottom:0.5px solid #f0f0f0;cursor:pointer;font-size:15px}
-.date-item.active{background:#f0f0f0;font-weight:600}
-.temp-table{width:100%;border-collapse:collapse}
-.temp-table th{font-size:11px;color:#666;font-weight:500;padding:6px 4px;border-bottom:0.5px solid #eee;text-align:left}
-.temp-table td{padding:8px 4px;border-bottom:0.5px solid #f0f0f0;font-size:13px;vertical-align:middle}
-.temp-input{width:60px;border:0.5px solid #ddd;border-radius:6px;padding:6px;font-size:13px;text-align:center}
-.ok-badge{font-size:10px;color:#085041;background:#E1F5EE;padding:2px 5px;border-radius:4px}
-.ng-badge{font-size:10px;color:#791F1F;background:#FCEBEB;padding:2px 5px;border-radius:4px}
-.login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#f2f2f7}
-.login-box{background:#fff;border-radius:16px;padding:24px;width:100%;max-width:400px}
-.login-title{font-size:22px;font-weight:600;text-align:center;margin-bottom:4px}
-.login-sub{font-size:14px;color:#666;text-align:center;margin-bottom:24px}
-.link-btn{background:none;border:none;color:#555;font-size:13px;text-align:center;width:100%;margin-top:16px;cursor:pointer;padding:8px}
-.action-row{padding:8px 0;border-bottom:0.5px solid #f0f0f0}
-.action-title{font-size:13px;font-weight:500}
-.action-sub{font-size:12px;color:#666;margin-top:2px}
-.rule-row{display:flex;align-items:center;padding:10px 0;border-bottom:0.5px solid #f0f0f0}
-.btn-row{display:flex;gap:8px;margin-top:8px}
-.btn-row .btn{margin-top:0}
-.common-badge{font-size:10px;color:#185FA5;background:#E6F1FB;padding:1px 6px;border-radius:4px;display:inline-block;margin-top:2px}
-.loading{text-align:center;color:#999;padding:24px}
-.hint{font-size:11px;color:#bbb;margin-top:8px}
-input[type=number]{-moz-appearance:textfield}
-input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-.temp-input{width:70px!important}
-.alert-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:0.5px solid #f0f0f0}
-.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
-.setting-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid #f0f0f0}
-input[type=checkbox]{width:auto}
-.toggle{position:relative;display:inline-block;width:44px;height:26px}
-.toggle input{opacity:0;width:0;height:0}
-.slider{position:absolute;cursor:pointer;inset:0;background:#ccc;border-radius:26px;transition:.3s}
-.slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.3s}
-input:checked + .slider{background:#000}
-input:checked + .slider:before{transform:translateX(18px)}
+.rl{flex:1;font-size:14px;color:var(--text)}
+.rs{font-size:11px;color:var(--text2);margin-top:1px}
+.ti-inp{width:72px;padding:7px 8px;font-size:14px;border:0.5px solid var(--border2);border-radius:var(--radius);text-align:center;background:var(--bg);color:var(--text)}
+.tu{font-size:12px;color:var(--text2)}
+.tgl{position:relative;width:44px;height:26px;flex-shrink:0}
+.tgl input{opacity:0;width:0;height:0}
+.tsl{position:absolute;inset:0;background:var(--border2);border-radius:13px;cursor:pointer;transition:background .2s}
+.tsl:before{content:'';position:absolute;width:20px;height:20px;left:3px;bottom:3px;background:white;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.tgl input:checked+.tsl{background:var(--green)}
+.tgl input:checked+.tsl:before{transform:translateX(18px)}
+.badge{font-size:11px;padding:3px 9px;border-radius:99px;font-weight:600;flex-shrink:0}
+.ok{background:var(--green-bg);color:var(--green-text)}
+.ng{background:var(--red-bg);color:var(--red-text)}
+.warn{background:var(--amber-bg);color:var(--amber-text)}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:10px}
+.stat{background:var(--bg2);border-radius:var(--radius);padding:12px;text-align:center}
+.sn{font-size:22px;font-weight:600;color:var(--text)}
+.sl{font-size:11px;color:var(--text2);margin-top:2px}
+.btn{width:100%;padding:14px;background:var(--blue);color:white;border:none;border-radius:var(--radius-lg);font-size:15px;font-weight:600;cursor:pointer;margin-top:4px}
+.btn:active{opacity:.82;transform:scale(0.98)}
+.btn-r{background:var(--red)}
+.btn-g{background:var(--green)}
+.btn-o{background:transparent;color:var(--blue);border:0.5px solid var(--blue);margin-top:8px}
+.ta{width:100%;padding:10px;font-size:14px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text);resize:vertical;min-height:64px}
+.sel-f{width:100%;padding:10px;font-size:14px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text)}
+.inp{width:100%;padding:10px;font-size:14px;border:0.5px solid var(--border2);border-radius:var(--radius);background:var(--bg);color:var(--text)}
+.pbar{height:4px;background:var(--border);border-radius:2px;margin:0 14px 10px}
+.pfill{height:4px;background:var(--green);border-radius:2px;transition:width .3s}
+.tab{display:none}.tab.on{display:block}
+.ptag{font-size:11px;padding:2px 7px;background:var(--blue-bg);color:var(--blue-text);border-radius:99px;margin-right:3px}
+.step-box{margin:10px;padding:13px;background:var(--bg2);border-left:3px solid var(--red)}
+.step-box.done{border-left-color:var(--green)}
+.step-num{font-size:11px;color:var(--red-text);font-weight:600;margin-bottom:3px}
+.step-num.done{color:var(--green-text)}
+.step-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+.step-desc{font-size:12px;color:var(--text2);line-height:1.5}
+.lot-row{display:flex;align-items:center;padding:10px 14px;border-bottom:0.5px solid var(--border);gap:8px;min-height:56px}
+.lot-row:last-child{border-bottom:none}
+.lot-id{font-size:12px;font-weight:600;color:var(--blue);min-width:110px}
+.rec-row{padding:9px 14px;border-bottom:0.5px solid var(--border);display:flex;align-items:flex-start;gap:9px}
+.rec-row:last-child{border-bottom:none}
+.rec-icon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
+.ri-ok{background:var(--green-bg);color:var(--green-text)}
+.ri-ng{background:var(--red-bg);color:var(--red-text)}
+.ri-w{background:var(--amber-bg);color:var(--amber-text)}
+.rec-text{font-size:13px;color:var(--text);flex:1}
+.rec-time{font-size:11px;color:var(--text2);margin-top:1px}
+.lbl{font-size:12px;color:var(--text2);margin-bottom:4px;margin-top:10px}
+.lbl:first-child{margin-top:0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;padding:8px 12px}
+.cal-day{text-align:center;font-size:11px;color:var(--text2);padding:4px 0;font-weight:600}
+.cal-cell{text-align:center;font-size:13px;padding:7px 2px;border-radius:var(--radius);cursor:pointer;color:var(--text);position:relative}
+.cal-cell:active{background:var(--bg3)}
+.cal-cell.today{background:var(--blue-bg);color:var(--blue-text);font-weight:600}
+.cal-cell.selected{background:var(--blue);color:white;font-weight:600}
+.cal-cell.has-rec::after{content:'';position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--green)}
+.cal-cell.has-ng::after{background:var(--red)}
+.cal-cell.empty{cursor:default}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 4px}
+.cal-month{font-size:14px;font-weight:600;color:var(--text)}
+.cal-nav{background:none;border:none;cursor:pointer;color:var(--text2);font-size:18px;padding:6px 10px}
+.modal-bg{background:rgba(0,0,0,0.5);padding:16px;display:none;align-items:flex-start;justify-content:center;min-height:320px;padding-top:20px}
+.modal-bg.open{display:flex}
+.modal{background:var(--bg);border-radius:var(--radius-lg);border:0.5px solid var(--border);padding:16px;width:100%}
+.modal-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.empty-msg{font-size:13px;color:var(--text2);text-align:center;padding:18px 0}
+.toast{position:fixed;bottom:calc(90px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#1a1a1a;color:white;font-size:13px;padding:10px 20px;border-radius:99px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.show{opacity:1}
 </style>
 </head>
 <body>
+<div class="app">
 
-<!-- ログイン画面 -->
-<div id="loginPage" class="login-page">
-  <div class="login-box">
-    <div class="login-title">🛡️ 衛生管理システム</div>
-    <div class="login-sub" id="loginSub">ログイン</div>
-    <div style="margin-bottom:12px">
-      <label>メールアドレス</label>
-      <input type="email" id="loginEmail" placeholder="example@email.com" autocomplete="email">
+<div class="hdr">
+  <div>
+    <div class="hdr-title"><i class="ti ti-building-factory2"></i> HutteHayashi HACCP</div>
+    <div class="hdr-date-row">
+      <input type="date" class="date-sel" id="active-date" onchange="onDateChange()">
+      <span class="past-pill" id="past-label" style="display:none"><i class="ti ti-history"></i> 過去記録</span>
     </div>
-    <div style="margin-bottom:12px">
-      <label>パスワード</label>
-      <input type="password" id="loginPassword" placeholder="6文字以上" autocomplete="current-password">
-    </div>
-    <button class="btn" onclick="handleAuth()">ログイン</button>
-    <button class="link-btn" onclick="toggleAuthMode()" id="authToggle">新規登録はこちら</button>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+    <span class="badge ok" id="hdr-status"><i class="ti ti-check"></i> 記録中</span>
+    <span style="font-size:11px;color:var(--text2)"><span class="sync-dot off" id="sync-dot"></span><span id="sync-label">未接続</span></span>
   </div>
 </div>
 
-<!-- メインアプリ -->
-<div id="mainApp" style="display:none">
-  <div class="header">
-    <h1 id="pageTitle">🛡️ 衛生管理システム</h1>
-  </div>
-  <div class="store-bar" id="storeBar"></div>
+<div class="past-banner" id="past-banner">
+  <i class="ti ti-calendar-event" style="color:var(--amber-text);font-size:15px"></i>
+  <span class="past-banner-text" id="past-banner-text"></span>
+  <button class="past-banner-btn" onclick="goToday()">今日に戻る</button>
+</div>
 
-  <!-- 日次記録 -->
-  <div id="page-daily" class="page active">
-    <div class="card">
-      <label>記録日（タップして変更）</label>
-      <button class="btn-outline" style="width:100%;text-align:left;padding:10px 12px;font-size:16px;font-weight:500;display:flex;justify-content:space-between" onclick="openDateModal()">
-        <span id="selectedDate"></span><span style="color:#999;font-size:12px">▼</span>
-      </button>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title" style="margin-bottom:0">✅ チェックリスト</span>
-        <span class="badge" id="checkBadge">0%</span>
-      </div>
-      <div id="checkList"></div>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title" style="margin-bottom:0">🌡️ 温度記録</span>
-        <button class="btn-outline" onclick="openAddTempModal()">+ 機器追加</button>
-      </div>
-      <table class="temp-table">
-        <thead><tr><th style="flex:2">機器</th><th>基準(°C以下)</th><th>朝(°C)</th><th>夕(°C)</th><th>判定</th></tr></thead>
-        <tbody id="tempTable"></tbody>
-      </table>
-      <div class="hint">※ 機器名を長押しで削除</div>
-    </div>
-    <div class="card">
-      <div class="card-title">👤 記録者</div>
-      <select id="dailyStaff" style="margin-bottom:0">
-        <option value="">-- 記録者を選択 --</option>
-      </select>
-    </div>
-    <div class="card">
-      <div class="card-title">📝 異常・特記事項</div>
-      <textarea id="dailyNote" placeholder="異常、ヒヤリハット、改善提案など"></textarea>
-    </div>
-    <button class="btn" onclick="saveDaily()">💾 保存する</button>
-    <div class="card" id="recentRecords" style="display:none">
-      <div class="card-title">📋 過去の記録（タップで編集）</div>
-      <div id="recentList"></div>
-    </div>
-  </div>
+<nav class="nav">
+  <button class="nb on" onclick="showTab('temp',this)"><i class="ti ti-thermometer"></i><br>温度</button>
+  <button class="nb" onclick="showTab('process',this)"><i class="ti ti-list-check"></i><br>工程</button>
+  <button class="nb" onclick="showTab('hygiene',this)"><i class="ti ti-droplet"></i><br>衛生</button>
+  <button class="nb" onclick="showTab('trace',this)"><i class="ti ti-git-branch"></i><br>追跡</button>
+  <button class="nb" onclick="showTab('records',this)"><i class="ti ti-archive"></i><br>記録</button>
+</nav>
 
-  <!-- 計画 -->
-  <div id="page-plan" class="page">
+<!-- 温度タブ -->
+<div id="tab-temp" class="tab on">
+  <div class="sec">
     <div class="card">
-      <div class="card-title">一般的衛生管理ルール</div>
-      <div id="ruleList"></div>
-      <div class="sep"></div>
-      <label>管理項目</label>
-      <input type="text" id="newRuleName" placeholder="例：トイレの清掃（1日2回）" style="margin-bottom:8px">
-      <label>頻度</label>
-      <input type="text" id="newRuleFreq" placeholder="例：毎日" style="margin-bottom:8px">
-      <div class="btn-row">
-        <button class="btn" style="background:#000" onclick="addRule(false)">この店舗に追加</button>
-        <button class="btn" style="background:#555" onclick="addRule(true)">全店舗に追加</button>
+      <div class="ch"><i class="ti ti-snowflake" style="color:var(--blue);font-size:18px"></i><span class="cht">冷蔵・冷凍庫温度</span><span class="chs">冷蔵&lt;5℃ / 冷凍&lt;-15℃</span></div>
+      <div class="pbar"><div class="pfill" id="tp" style="width:0%"></div></div>
+      <div class="row"><div class="rl">原料冷蔵庫<div class="rs">豚肉原料保管</div></div><input type="number" class="ti-inp" id="t1" placeholder="0.0" inputmode="decimal" oninput="chkTemp('t1','s1',5,'lt')"><span class="tu">℃</span><span class="badge" id="s1">—</span></div>
+      <div class="row"><div class="rl">製品冷蔵庫<div class="rs">ハム・生ハム・精肉</div></div><input type="number" class="ti-inp" id="t2" placeholder="0.0" inputmode="decimal" oninput="chkTemp('t2','s2',5,'lt')"><span class="tu">℃</span><span class="badge" id="s2">—</span></div>
+      <div class="row"><div class="rl">冷凍庫<div class="rs">メンチカツ・冷凍品</div></div><input type="number" class="ti-inp" id="t3" placeholder="0.0" inputmode="decimal" oninput="chkTemp('t3','s3',-15,'lt')"><span class="tu">℃</span><span class="badge" id="s3">—</span></div>
+      <div class="row"><div class="rl">製造室室温</div><input type="number" class="ti-inp" id="t4" placeholder="0.0" inputmode="decimal" oninput="chkTemp('t4','s4',15,'lt')"><span class="tu">℃</span><span class="badge" id="s4">—</span></div>
+    </div>
+    <div class="card">
+      <div class="ch"><i class="ti ti-flame" style="color:var(--red);font-size:18px"></i><span class="cht">加熱工程温度（CCP）</span><span class="chs">中心温度≥75℃</span></div>
+      <div class="row"><div class="rl">ハム・ソーセージ加熱<div class="rs"><span class="ptag">ハム</span><span class="ptag">ソーセージ</span></div></div><input type="number" class="ti-inp" id="t5" placeholder="0.0" inputmode="decimal" oninput="chkCCP('t5','s5')"><span class="tu">℃</span><span class="badge" id="s5">—</span></div>
+    </div>
+    <div id="ccp-flow" style="display:none">
+      <div class="card">
+        <div class="ch"><i class="ti ti-alert-triangle" style="color:var(--red);font-size:18px"></i><span class="cht" style="color:var(--red-text)">CCP逸脱 — 是正処置フロー</span></div>
+        <div class="step-box" id="step1"><div class="step-num">ステップ 1</div><div class="step-title">加熱を継続・再加熱</div><div class="step-desc">ロット全体を追加加熱し、中心温度75℃以上を再確認してください。</div><button class="btn" style="margin-top:10px;background:#854F0B;font-size:13px;padding:10px" onclick="doneStep(1)"><i class="ti ti-check"></i> 完了</button></div>
+        <div class="step-box" id="step2" style="opacity:.4"><div class="step-num">ステップ 2</div><div class="step-title">該当ロットを隔離・識別</div><div class="step-desc">「要確認品」ラベルを貼り、通常製品と区別して保管してください。</div><button class="btn" style="margin-top:10px;background:#854F0B;font-size:13px;padding:10px;display:none" id="s2btn" onclick="doneStep(2)"><i class="ti ti-check"></i> 完了</button></div>
+        <div class="step-box" id="step3" style="opacity:.4"><div class="step-num">ステップ 3</div><div class="step-title">原因調査・記録</div><div class="step-desc">加熱機器の温度計・タイマーを確認し、原因を記録してください。</div><button class="btn" style="margin-top:10px;background:#854F0B;font-size:13px;padding:10px;display:none" id="s3btn" onclick="doneStep(3)"><i class="ti ti-check"></i> 完了</button></div>
+        <div class="step-box" id="step4" style="opacity:.4"><div class="step-num">ステップ 4</div><div class="step-title">責任者へ報告・出荷判断</div><div class="step-desc">製造責任者に報告し、出荷可否を判断します。</div><button class="btn btn-r" style="margin-top:10px;font-size:13px;padding:10px;display:none" id="s4btn" onclick="completeCCP()"><i class="ti ti-file-check"></i> 是正処置完了・記録保存</button></div>
       </div>
     </div>
     <div class="card">
-      <div class="card-title">重要管理ポイント（メニュー）</div>
-      <div id="menuList"></div>
-      <div class="sep"></div>
-      <label>メニュー名</label>
-      <input type="text" id="newMenuName" placeholder="例：唐揚げ" style="margin-bottom:8px">
-      <label>加熱温度・時間</label>
-      <input type="text" id="newMenuTemp" placeholder="例：75°C以上・5分" style="margin-bottom:8px">
-      <label>その他の管理事項</label>
-      <input type="text" id="newMenuNote" placeholder="例：30分以内に10°C以下" style="margin-bottom:8px">
-      <button class="btn" onclick="addMenu()">+ メニュー追加</button>
+      <div class="ch"><i class="ti ti-pencil" style="font-size:18px;color:var(--text2)"></i><span class="cht">特記事項</span></div>
+      <div style="padding:10px 14px"><textarea class="ta" id="temp-note" placeholder="異常・対応処置など"></textarea></div>
     </div>
-  </div>
-
-  <!-- 振り返り -->
-  <div id="page-review" class="page">
-    <div class="card">
-      <label>対象月（例：2026-06）</label>
-      <input type="text" id="reviewMonth" placeholder="YYYY-MM" style="margin-bottom:8px">
-      <div class="btn-row">
-        <button class="btn" onclick="runReview()">🔍 集計・分析</button>
-        <button class="btn btn-green" onclick="exportCSV()" id="csvBtn" disabled>📥 CSV出力</button>
-      </div>
-      <div id="reviewMsg" style="font-size:12px;text-align:center;margin-top:8px;color:#999"></div>
-    </div>
-    <div class="card" id="reviewStats" style="display:none">
-      <div class="stat-grid" id="statsGrid"></div>
-      <div class="sep"></div>
-      <div id="reviewList"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">🔧 改善アクション記録</div>
-      <div id="actionList"></div>
-      <div class="sep"></div>
-      <label>発見した問題</label>
-      <input type="text" id="issueTitle" placeholder="例：手洗い記録の未記入が多い" style="margin-bottom:8px">
-      <label>原因</label>
-      <input type="text" id="issueCause" placeholder="例：記録用紙が見えにくかった" style="margin-bottom:8px">
-      <label>対策・改善内容</label>
-      <textarea id="issueAction" placeholder="例：記録用紙を正面に貼り直した" style="min-height:60px;margin-bottom:8px"></textarea>
-      <button class="btn" onclick="addAction()">+ 記録する</button>
-    </div>
-  </div>
-
-  <!-- スタッフ -->
-  <div id="page-staff" class="page">
-    <div class="card">
-      <div class="card-title">🏪 店舗管理</div>
-      <div id="storeList"></div>
-      <div class="sep"></div>
-      <label>新しい店舗名</label>
-      <input type="text" id="newStoreName" placeholder="例：店舗D" style="margin-bottom:8px">
-      <button class="btn" onclick="addStore()">+ 店舗を追加</button>
-    </div>
-    <div class="card">
-      <div class="card-title">👥 <span id="staffCardTitle">スタッフ一覧</span></div>
-      <div id="staffList"></div>
-      <div class="sep"></div>
-      <label>氏名</label>
-      <input type="text" id="newStaffName" placeholder="山田 太郎" style="margin-bottom:8px">
-      <label>役割</label>
-      <input type="text" id="newStaffRole" placeholder="例：調理師" style="margin-bottom:8px">
-      <button class="btn" onclick="addStaff()">+ スタッフ追加</button>
-    </div>
-  </div>
-
-  <!-- アラート -->
-  <div id="page-alerts" class="page">
-    <div class="card">
-      <div class="card-title">アラート設定</div>
-      <div class="setting-row">
-        <span style="font-size:14px;flex:1">チェック完了率80%未満</span>
-        <label class="toggle"><input type="checkbox" id="al1" checked><span class="slider"></span></label>
-      </div>
-      <div class="setting-row">
-        <span style="font-size:14px;flex:1">温度異常が発生</span>
-        <label class="toggle"><input type="checkbox" id="al2" checked><span class="slider"></span></label>
-      </div>
-      <div class="setting-row">
-        <span style="font-size:14px;flex:1">3日連続で記録なし</span>
-        <label class="toggle"><input type="checkbox" id="al3"><span class="slider"></span></label>
-      </div>
-      <button class="btn" onclick="checkAlerts()" style="margin-top:12px">🔔 今すぐ確認</button>
-    </div>
-    <div class="card">
-      <div class="card-title">通知ログ</div>
-      <div id="alertLog">
-        <div class="alert-row"><div class="alert-dot" style="background:#EF9F27"></div><div><div class="action-title">2026-06-10 完了率60%</div><div class="action-sub">基準（80%）を下回りました。</div></div></div>
-      </div>
-    </div>
-    <div class="card">
-      <button class="btn" style="background:#E24B4A" onclick="logout()">ログアウト</button>
-    </div>
-  </div>
-
-  <!-- タブバー -->
-  <div class="tab-bar">
-    <button class="tab active" onclick="showPage('daily',this)"><span class="tab-icon">📅</span>日次記録</button>
-    <button class="tab" onclick="showPage('plan',this)"><span class="tab-icon">📋</span>計画</button>
-    <button class="tab" onclick="showPage('review',this)"><span class="tab-icon">📊</span>振り返り</button>
-    <button class="tab" onclick="showPage('staff',this)"><span class="tab-icon">👥</span>スタッフ</button>
-    <button class="tab" onclick="showPage('alerts',this)"><span class="tab-icon">🔔</span>アラート</button>
+    <button class="btn" onclick="saveTemp()"><i class="ti ti-device-floppy"></i> 温度記録を保存</button>
   </div>
 </div>
 
-<!-- 日付選択モーダル -->
-<div class="modal" id="dateModal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span class="modal-title">日付を選択</span>
-      <button class="btn-outline" onclick="closeModal('dateModal')">閉じる</button>
+<!-- 工程タブ -->
+<div id="tab-process" class="tab">
+  <div class="sec">
+    <div class="card">
+      <div class="ch"><i class="ti ti-meat" style="font-size:18px;color:var(--blue)"></i><span class="cht">原料受入</span></div>
+      <div class="row"><div class="rl">福豚受入温度確認<div class="rs">林牧場からの原料</div></div><label class="tgl"><input type="checkbox" id="p1" onchange="calcP()"><span class="tsl"></span></label></div>
+      <div class="row"><div class="rl">外観・臭気確認</div><label class="tgl"><input type="checkbox" id="p2" onchange="calcP()"><span class="tsl"></span></label></div>
+      <div class="row"><div class="rl">納品書・ロット番号記録</div><label class="tgl"><input type="checkbox" id="p3" onchange="calcP()"><span class="tsl"></span></label></div>
     </div>
-    <div id="dateList"></div>
+    <div class="card">
+      <div class="ch"><i class="ti ti-tools-kitchen-2" style="font-size:18px;color:var(--blue)"></i><span class="cht">製造前確認</span></div>
+      <div class="row"><div class="rl">機器・器具の洗浄・消毒</div><label class="tgl"><input type="checkbox" id="p4" onchange="calcP()"><span class="tsl"></span></label></div>
+      <div class="row"><div class="rl">添加物の計量確認<div class="rs">亜硝酸塩・食塩等</div></div><label class="tgl"><input type="checkbox" id="p5" onchange="calcP()"><span class="tsl"></span></label></div>
+      <div class="row"><div class="rl">製造ロット番号の付与</div><label class="tgl"><input type="checkbox" id="p6" onchange="calcP()"><span class="tsl"></span></label></div>
+    </div>
+    <div class="card">
+      <div class="ch"><i class="ti ti-package" style="font-size:18px;color:var(--blue)"></i><span class="cht">包装・出荷前確認</span></div>
+      <div class="row"><div class="rl">シール・気密確認</div><label class="tgl"><input type="checkbox" id="p7" onchange="calcP()"><span class="tsl"></span></label></div>
+      <div class="row"><div class="rl">賞味期限・ロット表示</div><label class="tgl"><input type="checkbox" id="p8" onchange="calcP()"><span class="tsl"></span></label></div>
+      <div class="row"><div class="rl">金属探知機通過確認</div><label class="tgl"><input type="checkbox" id="p9" onchange="calcP()"><span class="tsl"></span></label></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="sn" id="pd">0</div><div class="sl">完了項目</div></div>
+      <div class="stat"><div class="sn" id="pr" style="color:var(--red)">9</div><div class="sl">未完了</div></div>
+    </div>
+    <button class="btn" onclick="saveProc()"><i class="ti ti-device-floppy"></i> 工程点検を保存</button>
   </div>
 </div>
 
-<!-- 機器追加モーダル -->
-<div class="modal" id="addTempModal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span class="modal-title">温度管理機器を追加</span>
-      <button class="btn-outline" onclick="closeModal('addTempModal')">閉じる</button>
+<!-- 衛生タブ -->
+<div id="tab-hygiene" class="tab">
+  <div class="sec">
+    <div class="card">
+      <div class="ch"><i class="ti ti-user-check" style="font-size:18px;color:var(--blue)"></i><span class="cht">従業員健康チェック</span></div>
+      <div class="row"><div class="rl">体調不良者なし（発熱・下痢等）</div><label class="tgl"><input type="checkbox" id="h1"><span class="tsl"></span></label></div>
+      <div class="row"><div class="rl">手指の傷・炎症なし</div><label class="tgl"><input type="checkbox" id="h2"><span class="tsl"></span></label></div>
+      <div class="row"><div class="rl">作業服・帽子・手袋着用</div><label class="tgl"><input type="checkbox" id="h3"><span class="tsl"></span></label></div>
     </div>
-    <div class="modal-body">
-      <label>機器名</label>
-      <input type="text" id="newTempLoc" placeholder="例：冷蔵庫②、ショーケース" style="margin-bottom:12px">
-      <label>基準温度（°C以下）</label>
-      <input type="text" inputmode="text" id="newTempLimit" value="10" style="margin-bottom:12px">
-      <button class="btn" onclick="addTemp()">追加する</button>
+    <div class="card">
+      <div class="ch"><i class="ti ti-droplet" style="font-size:18px;color:var(--blue)"></i><span class="cht">施設・設備衛生</span></div>
+      <div class="row"><div class="rl">製造室床・壁の清潔確認</div><label class="tgl"><input type="checkbox" id="h4"><span class="tsl"></span></label></div>
+      <div class="row"><div class="rl">排水溝の清掃・点検</div><label class="tgl"><input type="checkbox" id="h5"><span class="tsl"></span></label></div>
+      <div class="row"><div class="rl">手洗い設備の補充確認</div><label class="tgl"><input type="checkbox" id="h6"><span class="tsl"></span></label></div>
+      <div class="row"><div class="rl">害虫侵入防止設備の確認</div><label class="tgl"><input type="checkbox" id="h7"><span class="tsl"></span></label></div>
+    </div>
+    <button class="btn" onclick="saveHyg()"><i class="ti ti-device-floppy"></i> 衛生記録を保存</button>
+    <button class="btn btn-r" style="margin-top:8px" onclick="openNG()"><i class="ti ti-alert-triangle"></i> 不適合・改善報告</button>
+  </div>
+</div>
+
+<!-- 追跡タブ -->
+<div id="tab-trace" class="tab">
+  <div class="sec">
+    <div class="card">
+      <div class="ch"><i class="ti ti-plus" style="font-size:18px;color:var(--blue)"></i><span class="cht">新規ロット登録</span></div>
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px">
+        <div><div class="lbl">製品種別</div><select class="sel-f" id="lot-prod"><option>ハム</option><option>ソーセージ</option><option>生ハム</option><option>サラミ</option><option>メンチカツ</option><option>精肉</option></select></div>
+        <div><div class="lbl">原料受入日</div><input type="date" class="inp" id="lot-indate"></div>
+        <div><div class="lbl">原料ロット番号（林牧場）</div><input type="text" class="inp" id="lot-rawid" placeholder="例）HB-20260624-01"></div>
+        <div><div class="lbl">製造ロット番号</div><input type="text" class="inp" id="lot-mfgid" placeholder="例）HH-20260624-001"></div>
+        <div><div class="lbl">製造数量</div><input type="number" class="inp" id="lot-qty" placeholder="例）50" inputmode="numeric"></div>
+        <div><div class="lbl">賞味期限</div><input type="date" class="inp" id="lot-exp"></div>
+        <div><div class="lbl">出荷先（任意）</div><input type="text" class="inp" id="lot-dest" placeholder="例）直売所・〇〇店"></div>
+        <button class="btn btn-g" onclick="regLot()"><i class="ti ti-plus"></i> ロットを登録</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><i class="ti ti-list" style="font-size:18px;color:var(--blue)"></i><span class="cht">登録済みロット</span><span class="chs" id="lot-count">0件</span></div>
+      <div id="lot-list"><div style="padding:16px;text-align:center"><span class="empty-msg">まだロットが登録されていません</span></div></div>
     </div>
   </div>
 </div>
 
-<!-- 店舗名編集モーダル -->
-<div class="modal" id="editStoreModal">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span class="modal-title">店舗名を変更</span>
-      <button class="btn-outline" onclick="closeModal('editStoreModal')">閉じる</button>
+<!-- 記録タブ -->
+<div id="tab-records" class="tab">
+  <div class="sec">
+    <div class="card">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="calPrev()"><i class="ti ti-chevron-left"></i></button>
+        <span class="cal-month" id="cal-month-label"></span>
+        <button class="cal-nav" onclick="calNext()"><i class="ti ti-chevron-right"></i></button>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-day">日</div><div class="cal-day">月</div><div class="cal-day">火</div>
+        <div class="cal-day">水</div><div class="cal-day">木</div><div class="cal-day">金</div><div class="cal-day">土</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
     </div>
-    <div class="modal-body">
-      <label>新しい店舗名</label>
-      <input type="text" id="editStoreName" style="margin-bottom:12px">
-      <input type="hidden" id="editStoreId">
-      <button class="btn" onclick="saveStoreName()">保存する</button>
+    <div class="card">
+      <div class="ch"><i class="ti ti-calendar-event" style="font-size:18px;color:var(--text2)"></i><span class="cht" id="day-detail-title">記録の詳細</span></div>
+      <div id="day-detail-body"><div class="empty-msg">日付を選択して記録を確認</div></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="sn" id="r-temp" style="color:var(--text2)">—</div><div class="sl">温度記録</div></div>
+      <div class="stat"><div class="sn" id="r-proc" style="color:var(--text2)">—</div><div class="sl">工程点検</div></div>
+      <div class="stat"><div class="sn" id="r-hyg" style="color:var(--text2)">—</div><div class="sl">衛生管理</div></div>
+      <div class="stat"><div class="sn" id="r-ng" style="color:var(--red)">0</div><div class="sl">不適合件数</div></div>
+    </div>
+    <div class="card">
+      <div class="ch"><i class="ti ti-history" style="font-size:18px;color:var(--text2)"></i><span class="cht">イベントログ</span></div>
+      <div id="event-log">
+        <div class="rec-row"><div class="rec-icon ri-ok"><i class="ti ti-info-circle"></i></div><div><div class="rec-text">アプリを起動しました</div><div class="rec-time" id="start-time"></div></div></div>
+      </div>
+    </div>
+    <button class="btn" onclick="saveAll()"><i class="ti ti-device-floppy"></i> <span id="save-btn-label">本日の全記録を保存</span></button>
+    <button class="btn btn-o" style="margin-top:8px" onclick="loadFromCloud()"><i class="ti ti-cloud-download"></i> クラウドから最新を取得</button>
+  </div>
+</div>
+
+<!-- 不適合モーダル -->
+<div id="ng-modal-wrap" class="modal-bg">
+  <div class="modal">
+    <div class="modal-title"><i class="ti ti-alert-triangle" style="color:var(--red)"></i> 不適合・改善報告</div>
+    <div class="lbl">発生箇所</div><select class="sel-f" id="ng-loc"><option>原料受入</option><option>製造工程</option><option>加熱工程（CCP）</option><option>包装・出荷</option><option>保管・冷蔵</option><option>衛生管理</option></select>
+    <div class="lbl">不適合内容</div><textarea class="ta" id="ng-desc" placeholder="具体的な内容を記入してください"></textarea>
+    <div class="lbl">是正処置</div><textarea class="ta" id="ng-action" placeholder="実施した対応処置"></textarea>
+    <div class="lbl">担当者名</div><input type="text" class="inp" id="ng-staff" placeholder="氏名">
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button class="btn btn-r" style="flex:1;padding:12px;margin-top:0" onclick="submitNG()"><i class="ti ti-check"></i> 保存</button>
+      <button class="btn btn-o" style="flex:1;padding:12px;margin-top:0" onclick="closeNG()"><i class="ti ti-x"></i> キャンセル</button>
     </div>
   </div>
+</div>
+
+<div class="toast" id="toast"></div>
 </div>
 
 <script>
-const SUPABASE_URL = 'https://yrtotmvmjwsjwvgcazcn.supabase.co'
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlydG90bXZtandzand2Z2NhemNuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNjc1NTIsImV4cCI6MjA5Nzg0MzU1Mn0.vR1v8GG-9nqP1nmKaeDtQWRFxflhxbEbezU45FfrcOk'
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+const SUPABASE_URL='https://jqexliindtoiwwjpkroz.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpxZXhsaWluZHRvaXd3anBrcm96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNDM0MjgsImV4cCI6MjA5NzgxOTQyOH0.8Croo0REQWfu0yYVsecd1ctKUs-8UrQCRPSOgYa_1c8';
+const FACTORY='HutteHayashi';
+const HEADERS={'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Prefer':'resolution=merge-duplicates'};
 
-let currentUser = null
-let stores = []
-let currentStore = null
-let checks = []
-let temps = [{loc:'冷蔵庫①',morning:'',evening:'',limit:10},{loc:'冷凍庫①',morning:'',evening:'',limit:-15},{loc:'食材保管庫',morning:'',evening:'',limit:15}]
-let rules = []
-let menus = []
-let staff = []
-let reviewRecords = []
-let actions = []
-let isSignUp = false
-let selectedDate = new Date().toISOString().slice(0,10)
+const today=new Date();
+const todayStr=fmt(today);
+let activeDate=todayStr;
+let calYear=today.getFullYear();
+let calMonth=today.getMonth();
+let localDB={};
+let cloudCalCache={};
 
-// ── 認証 ──
-async function init(){
-  const {data:{session}} = await sb.auth.getSession()
-  if(session){currentUser=session.user;showApp()}
-  else{document.getElementById('loginPage').style.display='flex'}
+function fmt(d){return`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`}
+function fmtDisp(s){return`${s.slice(0,4)}年${s.slice(4,6)}月${s.slice(6,8)}日`}
+function fmtTime(d){return`${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`}
+function now(){return fmtTime(new Date())}
+
+document.getElementById('active-date').value=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+document.getElementById('start-time').textContent=fmtTime(today);
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+function setSyncStatus(state){
+  const dot=document.getElementById('sync-dot');
+  const lbl=document.getElementById('sync-label');
+  dot.className='sync-dot';
+  if(state==='ok'){dot.classList.add('');lbl.textContent='同期済';dot.style.background='var(--green)';}
+  else if(state==='syncing'){dot.classList.add('syncing');lbl.textContent='同期中...';dot.style.background='#EF9F27';}
+  else if(state==='err'){lbl.textContent='オフライン';dot.style.background='var(--red)';}
+  else{lbl.textContent='未接続';dot.style.background='var(--text3)';}
 }
 
-async function handleAuth(){
-  const email=document.getElementById('loginEmail').value.trim()
-  const password=document.getElementById('loginPassword').value
-  if(!email||!password){alert('メールアドレスとパスワードを入力してください');return}
-  if(isSignUp){
-    const {error}=await sb.auth.signUp({email,password})
-    if(error){alert('エラー: '+error.message);return}
-    alert('登録しました。ログインしてください。')
-    toggleAuthMode()
-  }else{
-    const {data,error}=await sb.auth.signInWithPassword({email,password})
-    if(error){alert('ログインエラー: メールアドレスまたはパスワードが違います。');return}
-    currentUser=data.user
-    showApp()
+async function apiGet(table,params=''){
+  try{
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`,{headers:{...HEADERS,'Prefer':''}});
+    if(!r.ok)throw new Error();
+    return await r.json();
+  }catch(e){return null;}
+}
+async function apiUpsert(table,body){
+  try{
+    setSyncStatus('syncing');
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/${table}`,{method:'POST',headers:HEADERS,body:JSON.stringify(body)});
+    if(!r.ok)throw new Error();
+    setSyncStatus('ok');return true;
+  }catch(e){setSyncStatus('err');return false;}
+}
+
+function getLocal(){try{return JSON.parse(localStorage.getItem('hh-haccp-v3')||'{}')}catch(e){return{}}}
+function setLocal(db){try{localStorage.setItem('hh-haccp-v3',JSON.stringify(db))}catch(e){}}
+
+function mergeRec(local,cloud){
+  return{
+    temps:cloud.temps||local.temps||{},
+    process:cloud.process||local.process||{},
+    hygiene:cloud.hygiene||local.hygiene||{},
+    tempNote:cloud.temp_note||local.tempNote||'',
+    savedTemp:cloud.saved_temp||local.savedTemp||false,
+    savedProc:cloud.saved_proc||local.savedProc||false,
+    savedHyg:cloud.saved_hyg||local.savedHyg||false,
+    ngCount:Math.max(cloud.ng_count||0,local.ngCount||0),
+  };
+}
+
+async function loadFromCloud(){
+  toast('クラウドから取得中...');
+  setSyncStatus('syncing');
+  const rows=await apiGet('haccp_records',`factory=eq.${FACTORY}&order=date.desc&limit=90`);
+  if(!rows){setSyncStatus('err');toast('オフラインです。ローカルデータを表示します');return;}
+  const db=getLocal();
+  rows.forEach(row=>{
+    const ds=row.date;
+    const local=db[ds]||{};
+    db[ds]=mergeRec(local,row);
+  });
+  setLocal(db);
+  const lotRows=await apiGet('haccp_lots',`factory=eq.${FACTORY}&order=created_at.desc&limit=200`);
+  if(lotRows){
+    const existing=lots.map(l=>l.mfgid);
+    lotRows.forEach(r=>{
+      if(!existing.includes(r.mfgid)){
+        lots.push({prod:r.prod,indate:r.indate,rawid:r.rawid,mfgid:r.mfgid,qty:r.qty,exp:r.exp,dest:r.dest,date:r.date});
+      }
+    });
+    renderLots();
   }
+  cloudCalCache={};
+  rows.forEach(r=>{cloudCalCache[r.date]={savedTemp:r.saved_temp,savedProc:r.saved_proc,savedHyg:r.saved_hyg,ngCount:r.ng_count};});
+  setSyncStatus('ok');
+  loadDateData(activeDate);
+  renderCal();
+  toast('クラウドから取得しました');
 }
 
-function toggleAuthMode(){
-  isSignUp=!isSignUp
-  document.getElementById('loginSub').textContent=isSignUp?'新規登録':'ログイン'
-  document.querySelector('#loginPage .btn').textContent=isSignUp?'登録する':'ログイン'
-  document.getElementById('authToggle').textContent=isSignUp?'既にアカウントをお持ちの方':'新規登録はこちら'
+async function pushToCloud(ds){
+  const db=getLocal();const rec=db[ds]||{};
+  const body={
+    date:ds,factory:FACTORY,
+    temps:rec.temps||{},process:rec.process||{},hygiene:rec.hygiene||{},
+    temp_note:rec.tempNote||'',
+    saved_temp:rec.savedTemp||false,saved_proc:rec.savedProc||false,saved_hyg:rec.savedHyg||false,
+    ng_count:rec.ngCount||0,
+    updated_at:new Date().toISOString()
+  };
+  const ok=await apiUpsert('haccp_records',body);
+  if(ok){cloudCalCache[ds]={savedTemp:rec.savedTemp,savedProc:rec.savedProc,savedHyg:rec.savedHyg,ngCount:rec.ngCount||0};renderCal();}
+  return ok;
 }
 
-async function logout(){
-  if(!confirm('ログアウトしますか？'))return
-  await sb.auth.signOut()
-  location.reload()
+function onDateChange(){
+  const v=document.getElementById('active-date').value;
+  if(!v)return;
+  const p=v.split('-');activeDate=p[0]+p[1]+p[2];
+  const isPast=activeDate!==todayStr;
+  document.getElementById('past-label').style.display=isPast?'':'none';
+  document.getElementById('past-banner').classList.toggle('show',isPast);
+  document.getElementById('past-banner-text').textContent=isPast?`${fmtDisp(activeDate)}の記録を編集中`:'';
+  document.getElementById('save-btn-label').textContent=isPast?`${fmtDisp(activeDate)}の記録を保存`:'本日の全記録を保存';
+  document.getElementById('hdr-status').className='badge '+(isPast?'warn':'ok');
+  document.getElementById('hdr-status').innerHTML=isPast?'<i class="ti ti-history"></i> 過去記録':'<i class="ti ti-check"></i> 記録中';
+  loadDateData(activeDate);renderCal();
+}
+function goToday(){
+  document.getElementById('active-date').value=`${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  onDateChange();
 }
 
-async function showApp(){
-  document.getElementById('loginPage').style.display='none'
-  document.getElementById('mainApp').style.display='block'
-  document.getElementById('selectedDate').textContent=selectedDate
-  await loadStores()
-  renderDateList()
+function loadDateData(ds){
+  const db=getLocal();const rec=db[ds]||{};
+  const thrs=[5,5,-15,15,75];const dirs=['lt','lt','lt','lt','gte'];
+  ['t1','t2','t3','t4','t5'].forEach((id,i)=>{
+    document.getElementById(id).value=rec.temps?rec.temps[id]||'':'';
+    const s=document.getElementById('s'+(i+1));
+    if(rec.temps&&rec.temps[id]!==undefined&&rec.temps[id]!==''){
+      const v=parseFloat(rec.temps[id]);const ok=dirs[i]==='lt'?v<thrs[i]:v>=thrs[i];
+      s.className='badge '+(ok?'ok':'ng');s.textContent=ok?'OK':'NG';
+    }else{s.className='badge';s.textContent='—';}
+  });
+  updateTP();
+  ['p1','p2','p3','p4','p5','p6','p7','p8','p9'].forEach(id=>{document.getElementById(id).checked=rec.process?rec.process[id]||false:false;});
+  calcP();
+  ['h1','h2','h3','h4','h5','h6','h7'].forEach(id=>{document.getElementById(id).checked=rec.hygiene?rec.hygiene[id]||false:false;});
+  document.getElementById('temp-note').value=rec.tempNote||'';
+  document.getElementById('r-temp').textContent=rec.savedTemp?'済':'—';document.getElementById('r-temp').style.color=rec.savedTemp?'var(--green)':'var(--text2)';
+  document.getElementById('r-proc').textContent=rec.savedProc?'済':'—';document.getElementById('r-proc').style.color=rec.savedProc?'var(--green)':'var(--text2)';
+  document.getElementById('r-hyg').textContent=rec.savedHyg?'済':'—';document.getElementById('r-hyg').style.color=rec.savedHyg?'var(--green)':'var(--text2)';
+  document.getElementById('r-ng').textContent=rec.ngCount||0;
 }
 
-// ── 店舗 ──
-async function loadStores(){
-  const {data}=await sb.from('stores').select('*').eq('user_id',currentUser.id).order('created_at')
-  if(data&&data.length>0){stores=data}
-  else{
-    const {data:ns}=await sb.from('stores').insert([
-      {name:'とんとん広場',user_id:currentUser.id},
-      {name:'道の駅',user_id:currentUser.id},
-      {name:'カフェ',user_id:currentUser.id}
-    ]).select()
-    stores=ns||[]
+function saveCurrentInputs(){
+  const db=getLocal();if(!db[activeDate])db[activeDate]={};const r=db[activeDate];
+  r.temps={};['t1','t2','t3','t4','t5'].forEach(id=>{r.temps[id]=document.getElementById(id).value;});
+  r.tempNote=document.getElementById('temp-note').value;
+  r.process={};['p1','p2','p3','p4','p5','p6','p7','p8','p9'].forEach(id=>{r.process[id]=document.getElementById(id).checked;});
+  r.hygiene={};['h1','h2','h3','h4','h5','h6','h7'].forEach(id=>{r.hygiene[id]=document.getElementById(id).checked;});
+  setLocal(db);
+}
+
+function showTab(name,btn){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+name).classList.add('on');btn.classList.add('on');
+  if(name==='records')renderCal();
+}
+
+function chkTemp(id,sid,thr,dir){
+  const v=parseFloat(document.getElementById(id).value);const el=document.getElementById(sid);
+  if(isNaN(v)){el.className='badge';el.textContent='—';updateTP();return;}
+  const ok=dir==='lt'?v<thr:v>=thr;
+  el.className='badge '+(ok?'ok':'ng');el.textContent=ok?'OK':'NG';
+  updateTP();
+  if(!ok)addLog('ng',`温度異常: ${document.getElementById(id).closest('.row').querySelector('.rl').childNodes[0].textContent.trim()} (${v}℃)`);
+}
+function chkCCP(id,sid){
+  const v=parseFloat(document.getElementById(id).value);const el=document.getElementById(sid);
+  const flow=document.getElementById('ccp-flow');
+  if(isNaN(v)){el.className='badge';el.textContent='—';flow.style.display='none';updateTP();return;}
+  const ok=v>=75;el.className='badge '+(ok?'ok':'ng');el.textContent=ok?'OK':'NG';
+  flow.style.display=ok?'none':'block';updateTP();
+  if(!ok){addLog('ng',`CCP逸脱: 中心温度 ${v}℃（基準75℃以上）`);bumpNG();}
+}
+function updateTP(){
+  const f=['t1','t2','t3','t4','t5'].filter(id=>document.getElementById(id).value!=='').length;
+  document.getElementById('tp').style.width=Math.round(f/5*100)+'%';
+}
+function doneStep(n){
+  const box=document.getElementById('step'+n);box.classList.add('done');
+  box.querySelector('.step-num').classList.add('done');box.querySelector('.step-num').textContent='ステップ '+n+' — 完了';
+  box.querySelector('button').style.display='none';addLog('warn','是正ステップ'+n+'完了');
+  if(n<4){document.getElementById('step'+(n+1)).style.opacity='1';document.getElementById('s'+(n+1)+'btn').style.display='block';}
+}
+function completeCCP(){doneStep(4);document.getElementById('ccp-flow').style.display='none';addLog('ok','CCP是正処置完了');document.getElementById('s5').className='badge warn';document.getElementById('s5').textContent='是正済';}
+function calcP(){
+  const ids=['p1','p2','p3','p4','p5','p6','p7','p8','p9'];
+  const done=ids.filter(id=>document.getElementById(id).checked).length;
+  document.getElementById('pd').textContent=done;document.getElementById('pr').textContent=ids.length-done;
+}
+function addLog(type,msg){
+  const log=document.getElementById('event-log');const row=document.createElement('div');row.className='rec-row';
+  const cls=type==='ok'?'ri-ok':type==='ng'?'ri-ng':'ri-w';const icon=type==='ok'?'ti-check':type==='ng'?'ti-alert-triangle':'ti-info-circle';
+  row.innerHTML=`<div class="rec-icon ${cls}"><i class="ti ${icon}"></i></div><div><div class="rec-text">${msg}</div><div class="rec-time">${fmtDisp(activeDate)} ${now()}</div></div>`;
+  log.appendChild(row);
+}
+function bumpNG(){
+  const db=getLocal();if(!db[activeDate])db[activeDate]={};
+  db[activeDate].ngCount=(db[activeDate].ngCount||0)+1;setLocal(db);
+  document.getElementById('r-ng').textContent=db[activeDate].ngCount;
+}
+
+const lots=[];
+function regLot(){
+  const rawid=document.getElementById('lot-rawid').value;const mfgid=document.getElementById('lot-mfgid').value;
+  if(!mfgid||!rawid){alert('ロット番号を入力してください');return;}
+  const prod=document.getElementById('lot-prod').value;
+  const lot={prod,indate:document.getElementById('lot-indate').value,rawid,mfgid,qty:document.getElementById('lot-qty').value,exp:document.getElementById('lot-exp').value,dest:document.getElementById('lot-dest').value,date:activeDate};
+  lots.push(lot);renderLots();addLog('ok',`ロット登録: ${mfgid} (${prod})`);
+  apiUpsert('haccp_lots',{...lot,factory:FACTORY});
+  document.getElementById('lot-mfgid').value='';document.getElementById('lot-rawid').value='';document.getElementById('lot-qty').value='';
+  toast('ロットを登録・同期しました');
+}
+function renderLots(){
+  const list=document.getElementById('lot-list');
+  document.getElementById('lot-count').textContent=lots.length+'件';
+  if(!lots.length){list.innerHTML='<div style="padding:16px;text-align:center"><span class="empty-msg">まだロットが登録されていません</span></div>';return;}
+  list.innerHTML=lots.slice().reverse().map(l=>`<div class="lot-row"><div><div class="lot-id">${l.mfgid}</div><div style="font-size:11px;color:var(--text2)">${fmtDisp(l.date)} | 原料: ${l.rawid}</div></div><div style="flex:1;padding-left:6px"><span class="ptag">${l.prod}</span>${l.qty?l.qty+'個':''}</div><div style="font-size:11px;color:var(--text2)">${l.exp||''}</div></div>`).join('');
+}
+
+function openNG(){document.getElementById('ng-modal-wrap').classList.add('open')}
+function closeNG(){document.getElementById('ng-modal-wrap').classList.remove('open')}
+async function submitNG(){
+  const desc=document.getElementById('ng-desc').value;if(!desc){alert('不適合内容を入力してください');return;}
+  const loc=document.getElementById('ng-loc').value;
+  addLog('ng',`不適合: [${loc}] ${desc.slice(0,20)}${desc.length>20?'…':''}`);
+  bumpNG();
+  await apiUpsert('haccp_ng_reports',{factory:FACTORY,date:activeDate,location:loc,description:desc,action:document.getElementById('ng-action').value,staff:document.getElementById('ng-staff').value});
+  await pushToCloud(activeDate);
+  closeNG();document.getElementById('ng-desc').value='';document.getElementById('ng-action').value='';document.getElementById('ng-staff').value='';
+  toast('不適合報告をクラウドに保存しました');
+}
+
+async function saveTemp(){
+  saveCurrentInputs();
+  const db=getLocal();if(!db[activeDate])db[activeDate]={};db[activeDate].savedTemp=true;setLocal(db);
+  document.getElementById('r-temp').textContent='済';document.getElementById('r-temp').style.color='var(--green)';
+  addLog('ok',`温度記録を保存 (${fmtDisp(activeDate)})`);
+  const ok=await pushToCloud(activeDate);
+  toast(ok?'温度記録をクラウドに保存しました':'ローカルに保存しました（オフライン）');
+}
+async function saveProc(){
+  saveCurrentInputs();
+  const db=getLocal();if(!db[activeDate])db[activeDate]={};db[activeDate].savedProc=true;setLocal(db);
+  document.getElementById('r-proc').textContent='済';document.getElementById('r-proc').style.color='var(--green)';
+  addLog('ok',`工程点検を保存 (${fmtDisp(activeDate)})`);
+  const ok=await pushToCloud(activeDate);
+  toast(ok?'工程点検をクラウドに保存しました':'ローカルに保存しました（オフライン）');
+}
+async function saveHyg(){
+  saveCurrentInputs();
+  const db=getLocal();if(!db[activeDate])db[activeDate]={};db[activeDate].savedHyg=true;setLocal(db);
+  document.getElementById('r-hyg').textContent='済';document.getElementById('r-hyg').style.color='var(--green)';
+  addLog('ok',`衛生管理を保存 (${fmtDisp(activeDate)})`);
+  const ok=await pushToCloud(activeDate);
+  toast(ok?'衛生管理をクラウドに保存しました':'ローカルに保存しました（オフライン）');
+}
+async function saveAll(){
+  saveCurrentInputs();
+  const db=getLocal();if(!db[activeDate])db[activeDate]={};
+  db[activeDate].savedTemp=true;db[activeDate].savedProc=true;db[activeDate].savedHyg=true;setLocal(db);
+  document.getElementById('r-temp').textContent='済';document.getElementById('r-temp').style.color='var(--green)';
+  document.getElementById('r-proc').textContent='済';document.getElementById('r-proc').style.color='var(--green)';
+  document.getElementById('r-hyg').textContent='済';document.getElementById('r-hyg').style.color='var(--green)';
+  addLog('ok',`全記録を保存 (${fmtDisp(activeDate)})`);
+  const ok=await pushToCloud(activeDate);
+  toast(ok?'全記録をクラウドに保存しました':'ローカルに保存しました（オフライン）');
+}
+
+function renderCal(){
+  const db=getLocal();
+  document.getElementById('cal-month-label').textContent=`${calYear}年${calMonth+1}月`;
+  const grid=document.getElementById('cal-grid');
+  const first=new Date(calYear,calMonth,1).getDay();
+  const last=new Date(calYear,calMonth+1,0).getDate();
+  let html='';
+  for(let i=0;i<first;i++)html+=`<div class="cal-cell empty"></div>`;
+  for(let d=1;d<=last;d++){
+    const ds=`${calYear}${String(calMonth+1).padStart(2,'0')}${String(d).padStart(2,'0')}`;
+    const local=db[ds]||{};const cloud=cloudCalCache[ds]||{};
+    const savedTemp=local.savedTemp||cloud.savedTemp;const savedProc=local.savedProc||cloud.savedProc;const savedHyg=local.savedHyg||cloud.savedHyg;
+    const hasRec=savedTemp||savedProc||savedHyg;
+    const hasNG=(local.ngCount||0)>0||(cloud.ngCount||0)>0;
+    let cls='cal-cell';
+    if(ds===activeDate)cls+=' selected';else if(ds===todayStr)cls+=' today';
+    if(hasNG)cls+=' has-ng';else if(hasRec)cls+=' has-rec';
+    html+=`<div class="${cls}" onclick="selectCalDay('${ds}')">${d}</div>`;
   }
-  currentStore=stores[0]
-  renderStoreBar()
-  renderStoreList()
-  await loadPageData()
+  grid.innerHTML=html;
 }
-
-function renderStoreBar(){
-  const bar=document.getElementById('storeBar')
-  bar.innerHTML=stores.map(s=>`<button class="store-chip${s.id===currentStore?.id?' active':''}" onclick="selectStore('${s.id}')">${s.name}</button>`).join('')
+function selectCalDay(ds){
+  activeDate=ds;const y=ds.slice(0,4),m=ds.slice(4,6),d2=ds.slice(6,8);
+  document.getElementById('active-date').value=`${y}-${m}-${d2}`;
+  onDateChange();showDayDetail(ds);
 }
-
-async function selectStore(id){
-  currentStore=stores.find(s=>s.id===id)
-  renderStoreBar()
-  await loadPageData()
+function showDayDetail(ds){
+  const db=getLocal();const rec=db[ds]||{};
+  document.getElementById('day-detail-title').textContent=fmtDisp(ds)+'の記録';
+  const rows=[];
+  rows.push({cls:rec.savedTemp?'ri-ok':'ri-ng',icon:rec.savedTemp?'ti-check':'ti-x',text:'温度記録: '+(rec.savedTemp?'保存済':'未保存')});
+  rows.push({cls:rec.savedProc?'ri-ok':'ri-ng',icon:rec.savedProc?'ti-check':'ti-x',text:'工程点検: '+(rec.savedProc?'保存済':'未保存')});
+  rows.push({cls:rec.savedHyg?'ri-ok':'ri-ng',icon:rec.savedHyg?'ti-check':'ti-x',text:'衛生管理: '+(rec.savedHyg?'保存済':'未保存')});
+  if(rec.ngCount)rows.push({cls:'ri-ng',icon:'ti-alert-triangle',text:`不適合: ${rec.ngCount}件`});
+  if(rec.tempNote)rows.push({cls:'ri-w',icon:'ti-pencil',text:`特記: ${rec.tempNote.slice(0,30)}${rec.tempNote.length>30?'…':''}`});
+  const editBtn=ds!==todayStr?`<div style="padding:10px 14px"><button class="btn" style="font-size:13px;padding:10px" onclick="editDay('${ds}')"><i class="ti ti-edit"></i> この日の記録を編集</button></div>`:'';
+  document.getElementById('day-detail-body').innerHTML=rows.map(r=>`<div class="rec-row"><div class="rec-icon ${r.cls}"><i class="ti ${r.icon}"></i></div><div class="rec-text">${r.text}</div></div>`).join('')+editBtn;
 }
+function editDay(ds){selectCalDay(ds);showTab('temp',document.querySelectorAll('.nb')[0]);}
+function calPrev(){if(calMonth===0){calMonth=11;calYear--;}else calMonth--;renderCal();}
+function calNext(){if(calMonth===11){calMonth=0;calYear++;}else calMonth++;renderCal();}
 
-async function loadPageData(){
-  await Promise.all([loadRules(),loadMenus(),loadStaff(),loadRecentRecords()])
-  loadRecord(selectedDate)
-}
-
-async function addStore(){
-  const name=document.getElementById('newStoreName').value.trim()
-  if(!name)return
-  const {data,error}=await sb.from('stores').insert({name,user_id:currentUser.id}).select().single()
-  if(error){alert('エラー: '+error.message);return}
-  stores.push(data)
-  document.getElementById('newStoreName').value=''
-  renderStoreBar()
-  renderStoreList()
-  alert('✓ '+name+' を追加しました')
-}
-
-function renderStoreList(){
-  document.getElementById('storeList').innerHTML=stores.map(s=>`
-    <div class="row">
-      <span style="flex:1;font-size:14px${s.id===currentStore?.id?';font-weight:700':''}">${s.name}</span>
-      <button class="btn-outline" onclick="openEditStore('${s.id}','${s.name}')">名前変更</button>
-      <button class="btn-danger" onclick="deleteStore('${s.id}','${s.name}')">削除</button>
-    </div>`).join('')
-  document.getElementById('staffCardTitle').textContent=(currentStore?.name||'')+'のスタッフ'
-}
-
-function openEditStore(id,name){
-  document.getElementById('editStoreId').value=id
-  document.getElementById('editStoreName').value=name
-  openModal('editStoreModal')
-}
-
-async function saveStoreName(){
-  const id=document.getElementById('editStoreId').value
-  const name=document.getElementById('editStoreName').value.trim()
-  if(!name)return
-  const {error}=await sb.from('stores').update({name}).eq('id',id)
-  if(error){alert('エラー: '+error.message);return}
-  const s=stores.find(s=>s.id===id)
-  if(s){s.name=name}
-  if(currentStore?.id===id)currentStore.name=name
-  closeModal('editStoreModal')
-  renderStoreBar()
-  renderStoreList()
-  alert('✓ 店舗名を変更しました')
-}
-
-async function deleteStore(id,name){
-  if(stores.length<=1){alert('最低1店舗は必要です。');return}
-  if(!confirm('「'+name+'」を削除しますか？\n関連する記録もすべて削除されます。'))return
-  const {error}=await sb.from('stores').delete().eq('id',id)
-  if(error){alert('エラー: '+error.message);return}
-  stores=stores.filter(s=>s.id!==id)
-  if(currentStore?.id===id)currentStore=stores[0]
-  renderStoreBar()
-  renderStoreList()
-  await loadPageData()
-  alert('✓ 削除しました')
-}
-
-// ── 日次記録 ──
-function renderDateList(){
-  const today=new Date()
-  const list=document.getElementById('dateList')
-  let html=''
-  for(let i=0;i<30;i++){
-    const d=new Date(today)
-    d.setDate(d.getDate()-i)
-    const ds=d.toISOString().slice(0,10)
-    html+=`<div class="date-item${ds===selectedDate?' active':''}" onclick="selectDate('${ds}')">${ds}${i===0?' （今日）':''}</div>`
-  }
-  list.innerHTML=html
-}
-
-async function selectDate(d){
-  selectedDate=d
-  document.getElementById('selectedDate').textContent=d
-  closeModal('dateModal')
-  renderDateList()
-  await loadRecord(d)
-}
-
-async function loadRecord(d){
-  if(!currentStore)return
-  const {data}=await sb.from('daily_records').select('*').eq('store_id',currentStore.id).eq('record_date',d).maybeSingle()
-  if(data){
-    document.getElementById('dailyNote').value=data.note||''
-    if(data.staff_name)document.getElementById('dailyStaff').value=data.staff_name
-    if(data.temps?.length>0)temps=data.temps
-    else temps=[{loc:'冷蔵庫①',morning:'',evening:'',limit:10},{loc:'冷凍庫①',morning:'',evening:'',limit:-15},{loc:'食材保管庫',morning:'',evening:'',limit:15}]
-    if(data.checks?.length>0){
-      checks=checks.map(c=>{
-        const sv=data.checks.find(s=>s.rule_id===c.rule_id)
-        return sv?{...c,checked:sv.checked}:c
-      })
-    }
-  }else{
-    document.getElementById('dailyNote').value=''
-    temps=[{loc:'冷蔵庫①',morning:'',evening:'',limit:10},{loc:'冷凍庫①',morning:'',evening:'',limit:-15},{loc:'食材保管庫',morning:'',evening:'',limit:15}]
-    checks=checks.map(c=>({...c,checked:false}))
-  }
-  renderChecks()
-  renderTemps()
-}
-
-async function loadRecentRecords(){
-  if(!currentStore)return
-  const {data}=await sb.from('daily_records').select('*').eq('store_id',currentStore.id).order('record_date',{ascending:false}).limit(10)
-  const box=document.getElementById('recentRecords')
-  const list=document.getElementById('recentList')
-  if(!data||data.length===0){box.style.display='none';return}
-  box.style.display='block'
-  list.innerHTML=data.map(r=>`
-    <div class="row" onclick="selectDate('${r.record_date}')" style="cursor:pointer">
-      <span style="font-size:13px;min-width:90px">${r.record_date}</span>
-      <div class="progress-bar"><div class="progress-fill" style="width:${r.pct}%;background:${r.pct>=80?'#1D9E75':r.pct>=50?'#EF9F27':'#E24B4A'}"></div></div>
-      <span style="font-size:12px;font-weight:500;min-width:36px;text-align:right;color:${r.pct>=80?'#085041':'#791F1F'}">${r.pct}%</span>
-    </div>`).join('')
-}
-
-function renderChecks(){
-  const done=checks.filter(c=>c.checked).length
-  const pct=checks.length>0?Math.round(done/checks.length*100):0
-  const badge=document.getElementById('checkBadge')
-  badge.textContent=pct+'%'
-  badge.className='badge '+(pct>=80?'badge-ok':'badge-ng')
-  document.getElementById('checkList').innerHTML=checks.map((c,i)=>`
-    <div class="check-row" onclick="toggleCheck(${i})">
-      <div class="checkbox${c.checked?' checked':''}">${c.checked?'✓':''}</div>
-      <span class="check-label${c.checked?' done':''}">${c.item}</span>
-    </div>`).join('')
-}
-
-function toggleCheck(i){
-  checks[i].checked=!checks[i].checked
-  renderChecks()
-}
-
-function renderTemps(){
-  document.getElementById('tempTable').innerHTML=temps.map((t,i)=>{
-    const mv=parseFloat(t.morning),ev=parseFloat(t.evening)
-    const vals=[mv,ev].filter(v=>!isNaN(v))
-    const lim=parseFloat(t.limit)
-    const ok=vals.length===0?null:Math.max(...vals)<=lim
-    return `<tr>
-      <td><span oncontextmenu="deleteTemp(${i});return false" style="cursor:pointer;font-size:13px">${t.loc}</span></td>
-      <td><input class="temp-input" type="text" inputmode="text" value="${t.limit}" oninput="updateTemp(${i},'limit',this.value)" style="width:65px"></td>
-      <td><input class="temp-input" type="text" inputmode="text" value="${t.morning}" oninput="updateTemp(${i},'morning',this.value)" placeholder="—"></td>
-      <td><input class="temp-input" type="text" inputmode="text" value="${t.evening}" oninput="updateTemp(${i},'evening',this.value)" placeholder="—"></td>
-      <td>${ok===null?'<span style="color:#999;font-size:11px">—</span>':ok?'<span class="ok-badge">適正</span>':'<span class="ng-badge">要対応</span>'}</td>
-    </tr>`
-  }).join('')
-}
-
-function updateTemp(i,field,val){
-  temps[i][field]=val
-  renderTemps()
-}
-
-function addTemp(){
-  const loc=document.getElementById('newTempLoc').value.trim()
-  const limit=parseFloat(document.getElementById('newTempLimit').value)||10
-  if(!loc)return
-  temps.push({loc,morning:'',evening:'',limit})
-  document.getElementById('newTempLoc').value=''
-  document.getElementById('newTempLimit').value='10'
-  closeModal('addTempModal')
-  renderTemps()
-}
-
-function deleteTemp(i){
-  if(!confirm('「'+temps[i].loc+'」を削除しますか？'))return
-  temps.splice(i,1)
-  renderTemps()
-}
-
-async function saveDaily(){
-  if(!currentStore){alert('店舗を選択してください');return}
-  const done=checks.filter(c=>c.checked).length
-  const total=checks.length
-  const pct=total>0?Math.round(done/total*100):0
-  const note=document.getElementById('dailyNote').value
-  const staff_name=document.getElementById('dailyStaff').value
-  const {error}=await sb.from('daily_records').upsert({
-    store_id:currentStore.id,record_date:selectedDate,checks,temps,note,staff_name,done,total,pct
-  },{onConflict:'store_id,record_date'})
-  if(error){alert('エラー: '+error.message);return}
-  alert('✓ 保存しました\n'+selectedDate+' の記録を保存しました')
-  await loadRecentRecords()
-}
-
-// ── 計画 ──
-async function loadRules(){
-  if(!currentStore)return
-  const {data:{user}}=await sb.auth.getUser()
-  const {data}=await sb.from('rules').select('*').eq('user_id',user.id).or(`store_id.is.null,store_id.eq.${currentStore.id}`).order('sort_order')
-  rules=data||[]
-  renderRules()
-}
-
-function renderRules(){
-  document.getElementById('ruleList').innerHTML=rules.length===0?'<div class="loading">ルールがありません</div>':rules.map(r=>`
-    <div class="rule-row">
-      <div style="flex:1">
-        <div style="font-size:14px">${r.name}</div>
-        ${!r.store_id?'<span class="common-badge">全店舗共通</span>':''}
-      </div>
-      <span style="font-size:11px;background:#f0f0f0;padding:2px 8px;border-radius:20px;color:#666;margin-right:8px">${r.freq||''}</span>
-      ${r.store_id?`<button class="btn-danger" onclick="deleteRule('${r.id}')">削除</button>`:''}
-    </div>`).join('')
-}
-
-async function addRule(toAll){
-  const name=document.getElementById('newRuleName').value.trim()
-  const freq=document.getElementById('newRuleFreq').value.trim()
-  if(!name)return
-  const {data:{user}}=await sb.auth.getUser()
-  const {data,error}=await sb.from('rules').insert({name,freq,user_id:user.id,store_id:toAll?null:currentStore.id,sort_order:rules.length}).select().single()
-  if(error){alert('エラー: '+error.message);return}
-  rules.push(data)
-  document.getElementById('newRuleName').value=''
-  renderRules()
-  alert('✓ '+(toAll?'全店舗':currentStore.name)+'に追加しました')
-}
-
-async function deleteRule(id){
-  if(!confirm('このルールを削除しますか？'))return
-  await sb.from('rules').delete().eq('id',id)
-  rules=rules.filter(r=>r.id!==id)
-  renderRules()
-}
-
-async function loadMenus(){
-  if(!currentStore)return
-  const {data}=await sb.from('menu_items').select('*').eq('store_id',currentStore.id)
-  menus=data||[]
-  renderMenus()
-}
-
-function renderMenus(){
-  document.getElementById('menuList').innerHTML=menus.length===0?'<div class="loading">メニューがありません</div>':menus.map(m=>`
-    <div class="rule-row">
-      <div style="flex:1">
-        <div style="font-size:14px">${m.name}</div>
-        <div style="font-size:12px;color:#999;margin-top:2px">${m.heat_temp||''} / ${m.notes||''}</div>
-      </div>
-      <button class="btn-danger" onclick="deleteMenu('${m.id}')">削除</button>
-    </div>`).join('')
-}
-
-async function addMenu(){
-  const name=document.getElementById('newMenuName').value.trim()
-  const heat_temp=document.getElementById('newMenuTemp').value.trim()
-  const notes=document.getElementById('newMenuNote').value.trim()
-  if(!name)return
-  const {data,error}=await sb.from('menu_items').insert({name,heat_temp,notes,store_id:currentStore.id}).select().single()
-  if(error){alert('エラー: '+error.message);return}
-  menus.push(data)
-  document.getElementById('newMenuName').value=''
-  document.getElementById('newMenuTemp').value=''
-  document.getElementById('newMenuNote').value=''
-  renderMenus()
-}
-
-async function deleteMenu(id){
-  if(!confirm('このメニューを削除しますか？'))return
-  await sb.from('menu_items').delete().eq('id',id)
-  menus=menus.filter(m=>m.id!==id)
-  renderMenus()
-}
-
-// ── 振り返り ──
-async function runReview(){
-  const month=document.getElementById('reviewMonth').value.trim()
-  if(!month.match(/^\d{4}-\d{2}$/)){alert('YYYY-MM の形式で入力してください（例：2026-06）');return}
-  const year=month.slice(0,4),mon=month.slice(5,7)
-  const lastDay=new Date(parseInt(year),parseInt(mon),0).toISOString().slice(0,10)
-  const {data,error}=await sb.from('daily_records').select('*').eq('store_id',currentStore.id).gte('record_date',`${year}-${mon}-01`).lte('record_date',lastDay).order('record_date')
-  const msg=document.getElementById('reviewMsg')
-  if(error){msg.textContent='エラー: '+error.message;return}
-  reviewRecords=data||[]
-  document.getElementById('csvBtn').disabled=reviewRecords.length===0
-  if(reviewRecords.length===0){msg.textContent=month+' のデータがありません';msg.style.color='#999';document.getElementById('reviewStats').style.display='none';return}
-  msg.textContent=reviewRecords.length+'件のデータが見つかりました'
-  msg.style.color='#1D9E75'
-  const avg=Math.round(reviewRecords.reduce((s,r)=>s+r.pct,0)/reviewRecords.length)
-  document.getElementById('statsGrid').innerHTML=`
-    <div class="stat-box"><div class="stat-num">${reviewRecords.length}</div><div class="stat-label">記録日数</div></div>
-    <div class="stat-box"><div class="stat-num">${avg}%</div><div class="stat-label">完了率平均</div></div>
-    <div class="stat-box"><div class="stat-num">${reviewRecords.filter(r=>r.pct<100).length}</div><div class="stat-label">未完了日数</div></div>
-    <div class="stat-box"><div class="stat-num">${reviewRecords.filter(r=>r.note?.trim()).length}</div><div class="stat-label">特記件数</div></div>`
-  document.getElementById('reviewList').innerHTML=reviewRecords.map(r=>`
-    <div class="row">
-      <span style="font-size:13px;min-width:48px">${r.record_date.slice(5)}</span>
-      <div class="progress-bar"><div class="progress-fill" style="width:${r.pct}%;background:${r.pct>=80?'#1D9E75':r.pct>=50?'#EF9F27':'#E24B4A'}"></div></div>
-      <span style="font-size:12px;font-weight:500;min-width:36px;text-align:right;color:${r.pct>=80?'#085041':'#791F1F'}">${r.pct}%</span>
-    </div>`).join('')
-  document.getElementById('reviewStats').style.display='block'
-}
-
-function exportCSV(){
-  if(!reviewRecords.length)return
-  const month=document.getElementById('reviewMonth').value.trim()
-  const header=['日付','店舗','完了数','合計','完了率(%)','特記事項']
-  const rows=reviewRecords.map(r=>[r.record_date,currentStore?.name||'',r.done,r.total,r.pct,(r.note||'').replace(/,/g,'、').replace(/\n/g,' ')])
-  const csv='\uFEFF'+[header,...rows].map(r=>r.join(',')).join('\n')
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'})
-  const url=URL.createObjectURL(blob)
-  const a=document.createElement('a')
-  a.href=url
-  a.download=`衛生管理_${currentStore?.name}_${month}.csv`
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
-function addAction(){
-  const title=document.getElementById('issueTitle').value.trim()
-  const cause=document.getElementById('issueCause').value.trim()
-  const action=document.getElementById('issueAction').value.trim()
-  if(!title)return
-  const now=new Date()
-  actions.unshift({title:`${now.getFullYear()}年${now.getMonth()+1}月：${title}`,cause,action})
-  document.getElementById('issueTitle').value=''
-  document.getElementById('issueCause').value=''
-  document.getElementById('issueAction').value=''
-  renderActions()
-}
-
-function renderActions(){
-  document.getElementById('actionList').innerHTML=actions.length===0?'':actions.map(a=>`
-    <div class="action-row">
-      <div class="action-title">${a.title}</div>
-      <div class="action-sub">原因：${a.cause||'—'} ／ 対策：${a.action||'—'}</div>
-    </div>`).join('')
-}
-
-// ── スタッフ ──
-async function loadStaff(){
-  if(!currentStore)return
-  const {data}=await sb.from('staff').select('*').eq('store_id',currentStore.id).order('name')
-  staff=data||[]
-  renderStaff()
-  renderStaffSelect()
-  document.getElementById('staffCardTitle').textContent=currentStore.name+'のスタッフ'
-}
-
-function renderStaffSelect(){
-  const sel=document.getElementById('dailyStaff')
-  const cur=sel.value
-  sel.innerHTML='<option value="">-- 記録者を選択 --</option>'+staff.map(s=>`<option value="${s.name}">${s.name}（${s.role||''}）</option>`).join('')
-  if(cur)sel.value=cur
-}
-
-function renderStaff(){
-  const STATUS_LABELS={active:'勤務中',leave:'休暇中',sick:'病欠'}
-  const STATUS_COLORS={active:'#085041',leave:'#633806',sick:'#791F1F'}
-  const STATUS_BG={active:'#E1F5EE',leave:'#FAEEDA',sick:'#FCEBEB'}
-  const STATUS_CYCLE={active:'leave',leave:'sick',sick:'active'}
-  document.getElementById('staffList').innerHTML=staff.length===0?'<div class="loading">スタッフがいません</div>':staff.map(s=>`
-    <div class="row">
-      <div style="width:36px;height:36px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;margin-right:10px;font-size:14px;font-weight:500;color:#185FA5;flex-shrink:0">${s.name.slice(0,1)}</div>
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:500">${s.name}</div>
-        <div style="font-size:12px;color:#666;margin-top:2px">${s.role||''}</div>
-      </div>
-      <span class="pill" style="background:${STATUS_BG[s.status]||STATUS_BG.active};color:${STATUS_COLORS[s.status]||STATUS_COLORS.active}" onclick="cycleStatus('${s.id}','${STATUS_CYCLE[s.status]||'active'}')">${STATUS_LABELS[s.status]||'勤務中'}</span>
-      <button class="btn-danger" style="margin-left:8px" onclick="deleteStaff('${s.id}')">削除</button>
-    </div>`).join('')
-}
-
-async function cycleStatus(id,next){
-  await sb.from('staff').update({status:next}).eq('id',id)
-  const s=staff.find(s=>s.id===id)
-  if(s)s.status=next
-  renderStaff()
-}
-
-async function addStaff(){
-  const name=document.getElementById('newStaffName').value.trim()
-  const role=document.getElementById('newStaffRole').value.trim()
-  if(!name||!currentStore)return
-  const {data:{user}}=await sb.auth.getUser()
-  const {data,error}=await sb.from('staff').insert({name,role,status:'active',user_id:user.id,store_id:currentStore.id}).select().single()
-  if(error){alert('エラー: '+error.message);return}
-  staff.push(data)
-  document.getElementById('newStaffName').value=''
-  document.getElementById('newStaffRole').value=''
-  renderStaff()
-}
-
-async function deleteStaff(id){
-  if(!confirm('このスタッフを削除しますか？'))return
-  await sb.from('staff').delete().eq('id',id)
-  staff=staff.filter(s=>s.id!==id)
-  renderStaff()
-}
-
-// ── アラート ──
-async function checkAlerts(){
-  const {data}=await sb.from('daily_records').select('*').eq('store_id',currentStore.id).order('record_date',{ascending:false}).limit(30)
-  const newLogs=[]
-  const al1=document.getElementById('al1').checked
-  if(al1&&data){
-    data.forEach(r=>{
-      if(r.pct<80)newLogs.push({type:'warn',title:`${r.record_date} 完了率${r.pct}%`,msg:'基準（80%）を下回りました。'})
-    })
-  }
-  if(newLogs.length===0)newLogs.push({type:'ok',title:'異常なし',msg:'現在アラートはありません。'})
-  const colors={warn:'#EF9F27',danger:'#E24B4A',ok:'#1D9E75'}
-  const existing=document.getElementById('alertLog').innerHTML
-  document.getElementById('alertLog').innerHTML=newLogs.map(l=>`
-    <div class="alert-row">
-      <div class="alert-dot" style="background:${colors[l.type]}"></div>
-      <div><div class="action-title">${l.title}</div><div class="action-sub">${l.msg}</div></div>
-    </div>`).join('')+existing
-}
-
-// ── UI ──
-function showPage(name,el){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'))
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'))
-  document.getElementById('page-'+name).classList.add('active')
-  el.classList.add('active')
-  const titles={daily:'📅 日次記録',plan:'📋 衛生管理計画',review:'📊 振り返り',staff:'⚙️ 店舗・スタッフ',alerts:'🔔 アラート'}
-  document.getElementById('pageTitle').textContent=titles[name]
-  if(name==='plan'){loadRules();loadMenus()}
-  if(name==='staff'){loadStaff();renderStoreList()}
-  if(name==='review'){
-    const m=new Date().toISOString().slice(0,7)
-    if(!document.getElementById('reviewMonth').value)document.getElementById('reviewMonth').value=m
-  }
-}
-
-function openModal(id){document.getElementById(id).classList.add('open')}
-function closeModal(id){document.getElementById(id).classList.remove('open')}
-function openDateModal(){renderDateList();openModal('dateModal')}
-function openAddTempModal(){openModal('addTempModal')}
-
-// チェックリストをルールから生成
-async function loadRulesForDaily(){
-  if(!currentStore)return
-  const {data:{user}}=await sb.auth.getUser()
-  const {data}=await sb.from('rules').select('*').eq('user_id',user.id).or(`store_id.is.null,store_id.eq.${currentStore.id}`).order('sort_order')
-  const r=data||[]
-  checks=r.map(rule=>({rule_id:rule.id,item:rule.name,checked:false}))
-  renderChecks()
-  await loadRecord(selectedDate)
-}
-
-// モーダルの外側クリックで閉じる
-document.querySelectorAll('.modal').forEach(m=>{
-  m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')})
-})
-
-// 初期化
-window.addEventListener('DOMContentLoaded',init)
-
-// loadStoresの後にチェックリストも読み込む
-const origLoadStores=loadStores
-loadStores=async function(){
-  await origLoadStores()
-  checks=[]
-  await loadRulesForDaily()
-}
+renderCal();
+loadDateData(todayStr);
+loadFromCloud();
 </script>
 </body>
 </html>
