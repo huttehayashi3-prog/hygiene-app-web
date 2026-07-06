@@ -84,6 +84,7 @@ textarea{min-height:80px;resize:vertical}
 .hint{font-size:11px;color:#bbb;margin-top:8px}
 input[type=number]{-moz-appearance:textfield}
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+.temp-input{width:70px!important}
 .alert-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:0.5px solid #f0f0f0}
 .alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px}
 .setting-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid #f0f0f0}
@@ -148,6 +149,12 @@ input:checked + .slider:before{transform:translateX(18px)}
         <tbody id="tempTable"></tbody>
       </table>
       <div class="hint">※ 機器名を長押しで削除</div>
+    </div>
+    <div class="card">
+      <div class="card-title">👤 記録者</div>
+      <select id="dailyStaff" style="margin-bottom:0">
+        <option value="">-- 記録者を選択 --</option>
+      </select>
     </div>
     <div class="card">
       <div class="card-title">📝 異常・特記事項</div>
@@ -302,7 +309,7 @@ input:checked + .slider:before{transform:translateX(18px)}
       <label>機器名</label>
       <input type="text" id="newTempLoc" placeholder="例：冷蔵庫②、ショーケース" style="margin-bottom:12px">
       <label>基準温度（°C以下）</label>
-      <input type="number" id="newTempLimit" value="10" style="margin-bottom:12px">
+      <input type="text" inputmode="decimal" id="newTempLimit" value="10" style="margin-bottom:12px">
       <button class="btn" onclick="addTemp()">追加する</button>
     </div>
   </div>
@@ -504,6 +511,7 @@ async function loadRecord(d){
   const {data}=await sb.from('daily_records').select('*').eq('store_id',currentStore.id).eq('record_date',d).maybeSingle()
   if(data){
     document.getElementById('dailyNote').value=data.note||''
+    if(data.staff_name)document.getElementById('dailyStaff').value=data.staff_name
     if(data.temps?.length>0)temps=data.temps
     else temps=[{loc:'冷蔵庫①',morning:'',evening:'',limit:10},{loc:'冷凍庫①',morning:'',evening:'',limit:-15},{loc:'食材保管庫',morning:'',evening:'',limit:15}]
     if(data.checks?.length>0){
@@ -561,8 +569,8 @@ function renderTemps(){
     const ok=vals.length===0?null:Math.max(...vals)<=t.limit
     return `<tr>
       <td><span oncontextmenu="deleteTemp(${i});return false" style="cursor:pointer">${t.loc}<br><span style="font-size:10px;color:#999">${t.limit}°C以下</span></span></td>
-      <td><input class="temp-input" type="number" value="${t.morning}" oninput="updateTemp(${i},'morning',this.value)" placeholder="—"></td>
-      <td><input class="temp-input" type="number" value="${t.evening}" oninput="updateTemp(${i},'evening',this.value)" placeholder="—"></td>
+      <td><input class="temp-input" type="text" inputmode="decimal" value="${t.morning}" oninput="updateTemp(${i},'morning',this.value)" placeholder="—"></td>
+      <td><input class="temp-input" type="text" inputmode="decimal" value="${t.evening}" oninput="updateTemp(${i},'evening',this.value)" placeholder="—"></td>
       <td>${ok===null?'<span style="color:#999;font-size:11px">—</span>':ok?'<span class="ok-badge">適正</span>':'<span class="ng-badge">要対応</span>'}</td>
     </tr>`
   }).join('')
@@ -596,8 +604,9 @@ async function saveDaily(){
   const total=checks.length
   const pct=total>0?Math.round(done/total*100):0
   const note=document.getElementById('dailyNote').value
+  const staff_name=document.getElementById('dailyStaff').value
   const {error}=await sb.from('daily_records').upsert({
-    store_id:currentStore.id,record_date:selectedDate,checks,temps,note,done,total,pct
+    store_id:currentStore.id,record_date:selectedDate,checks,temps,note,staff_name,done,total,pct
   },{onConflict:'store_id,record_date'})
   if(error){alert('エラー: '+error.message);return}
   alert('✓ 保存しました\n'+selectedDate+' の記録を保存しました')
@@ -755,7 +764,15 @@ async function loadStaff(){
   const {data}=await sb.from('staff').select('*').eq('store_id',currentStore.id).order('name')
   staff=data||[]
   renderStaff()
+  renderStaffSelect()
   document.getElementById('staffCardTitle').textContent=currentStore.name+'のスタッフ'
+}
+
+function renderStaffSelect(){
+  const sel=document.getElementById('dailyStaff')
+  const cur=sel.value
+  sel.innerHTML='<option value="">-- 記録者を選択 --</option>'+staff.map(s=>`<option value="${s.name}">${s.name}（${s.role||''}）</option>`).join('')
+  if(cur)sel.value=cur
 }
 
 function renderStaff(){
