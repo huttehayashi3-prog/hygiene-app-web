@@ -145,7 +145,7 @@ input:checked + .slider:before{transform:translateX(18px)}
         <button class="btn-outline" onclick="openAddTempModal()">+ 機器追加</button>
       </div>
       <table class="temp-table">
-        <thead><tr><th style="flex:2">機器</th><th>基準</th><th>朝(°C)</th><th>夕(°C)</th><th>判定</th></tr></thead>
+        <thead><tr><th style="flex:2">機器</th><th>基準(°C以下)</th><th>朝(°C)</th><th>夕(°C)</th><th>判定</th></tr></thead>
         <tbody id="tempTable"></tbody>
       </table>
       <div class="hint">※ 機器名を長押しで削除</div>
@@ -309,7 +309,7 @@ input:checked + .slider:before{transform:translateX(18px)}
       <label>機器名</label>
       <input type="text" id="newTempLoc" placeholder="例：冷蔵庫②、ショーケース" style="margin-bottom:12px">
       <label>基準温度（°C以下）</label>
-      <input type="text" inputmode="decimal" id="newTempLimit" value="10" style="margin-bottom:12px">
+      <input type="text" inputmode="text" id="newTempLimit" value="10" style="margin-bottom:12px">
       <button class="btn" onclick="addTemp()">追加する</button>
     </div>
   </div>
@@ -566,11 +566,13 @@ function renderTemps(){
   document.getElementById('tempTable').innerHTML=temps.map((t,i)=>{
     const mv=parseFloat(t.morning),ev=parseFloat(t.evening)
     const vals=[mv,ev].filter(v=>!isNaN(v))
-    const ok=vals.length===0?null:Math.max(...vals)<=t.limit
+    const lim=parseFloat(t.limit)
+    const ok=vals.length===0?null:Math.max(...vals)<=lim
     return `<tr>
-      <td><span oncontextmenu="deleteTemp(${i});return false" style="cursor:pointer">${t.loc}<br><span style="font-size:10px;color:#999">${t.limit}°C以下</span></span></td>
-      <td><input class="temp-input" type="text" inputmode="decimal" value="${t.morning}" oninput="updateTemp(${i},'morning',this.value)" placeholder="—"></td>
-      <td><input class="temp-input" type="text" inputmode="decimal" value="${t.evening}" oninput="updateTemp(${i},'evening',this.value)" placeholder="—"></td>
+      <td><span oncontextmenu="deleteTemp(${i});return false" style="cursor:pointer;font-size:13px">${t.loc}</span></td>
+      <td><input class="temp-input" type="text" inputmode="text" value="${t.limit}" oninput="updateTemp(${i},'limit',this.value)" style="width:65px"></td>
+      <td><input class="temp-input" type="text" inputmode="text" value="${t.morning}" oninput="updateTemp(${i},'morning',this.value)" placeholder="—"></td>
+      <td><input class="temp-input" type="text" inputmode="text" value="${t.evening}" oninput="updateTemp(${i},'evening',this.value)" placeholder="—"></td>
       <td>${ok===null?'<span style="color:#999;font-size:11px">—</span>':ok?'<span class="ok-badge">適正</span>':'<span class="ng-badge">要対応</span>'}</td>
     </tr>`
   }).join('')
